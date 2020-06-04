@@ -15,6 +15,8 @@ Zero configuration search for Gutenberg.
 
 Zero configuration search for Gutenberg.
 
+Extend the plugin from <a href="https://github.com/maheshwaghmare/easy-search/">Github</a>.
+
 == Installation ==
 
 1. Install the <code>Easy Search</code> plugin either via the WordPress plugin directory, or by uploading the files to your server at <code>wp-content/plugins</code>.
