@@ -31,9 +31,9 @@ registerBlockType( 'easy-search/easy-search', {
 	icon: 'shield', // Block icon from Dashicons → https://developer.wordpress.org/resource/dashicons/.
 	category: 'common', // Block category — Group blocks together based on common traits E.g. common, formatting, layout widgets, embed.
 	keywords: [
-		__( 'easy-search — CGB Block' ),
-		__( 'CGB Example' ),
-		__( 'create-guten-block' ),
+		__( 'search' ),
+		__( 'easy search' ),
+		__( 'quick search' ),
 	],
 
 	attributes : {

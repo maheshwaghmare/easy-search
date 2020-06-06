@@ -97,7 +97,7 @@ if( ! function_exists( 'easy_search_block_assets' ) ) :
 	function easy_search_block_assets() { // phpcs:ignore
 		// Register block styles for both frontend + backend.
 		wp_register_style(
-			'easy_search-cgb-style-css', // Handle.
+			'easy_search-style-css', // Handle.
 			plugins_url( 'dist/blocks.style.build.css', dirname( __FILE__ ) ), // Block style CSS.
 			is_admin() ? array( 'wp-editor' ) : null, // Dependency to include the CSS after it.
 			null // filemtime( plugin_dir_path( __DIR__ ) . 'dist/blocks.style.build.css' ) // Version: File modification time.
@@ -105,7 +105,7 @@ if( ! function_exists( 'easy_search_block_assets' ) ) :
 
 		// Register block editor script for backend.
 		wp_register_script(
-			'easy_search-cgb-block-js', // Handle.
+			'easy_search-block-js', // Handle.
 			plugins_url( '/dist/blocks.build.js', dirname( __FILE__ ) ), // Block.build.js: We register the block here. Built with Webpack.
 			array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor' ), // Dependencies, defined above.
 			null, // filemtime( plugin_dir_path( __DIR__ ) . 'dist/blocks.build.js' ), // Version: filemtime — Gets file modification time.
@@ -114,7 +114,7 @@ if( ! function_exists( 'easy_search_block_assets' ) ) :
 
 		// Register block editor script for backend.
 		wp_register_script(
-			'easy_search-cgb-block-front-end-js', // Handle.
+			'easy_search-block-front-end-js', // Handle.
 			plugins_url( '/dist/front-end.js', dirname( __FILE__ ) ), // Block.build.js: We register the block here. Built with Webpack.
 			array( 'jquery', 'wp-util' ), // Dependencies, defined above.
 			null, // filemtime( plugin_dir_path( __DIR__ ) . 'dist/blocks.build.js' ), // Version: filemtime — Gets file modification time.
@@ -125,24 +125,24 @@ if( ! function_exists( 'easy_search_block_assets' ) ) :
 			'api_url' => rest_url() . 'wp/v2/search/',
 			'reference' => 'easy-search',
 		);
-		wp_localize_script( 'easy_search-cgb-block-front-end-js', 'EasySearchVars', $vars );
+		wp_localize_script( 'easy_search-block-front-end-js', 'EasySearchVars', $vars );
 
 		// Register block editor styles for backend.
 		wp_register_style(
-			'easy_search-cgb-block-editor-css', // Handle.
+			'easy_search-block-editor-css', // Handle.
 			plugins_url( 'dist/blocks.editor.build.css', dirname( __FILE__ ) ), // Block editor CSS.
 			array( 'wp-edit-blocks' ), // Dependency to include the CSS after it.
 			null // filemtime( plugin_dir_path( __DIR__ ) . 'dist/blocks.editor.build.css' ) // Version: File modification time.
 		);
 
-		// WP Localized globals. Use dynamic PHP stuff in JavaScript via `cgbGlobal` object.
+		// WP Localized globals. Use dynamic PHP stuff in JavaScript via `easySearchGlobal` object.
 		wp_localize_script(
-			'easy_search-cgb-block-js',
-			'cgbGlobal', // Array containing dynamic data for a JS Global.
+			'easy_search-block-js',
+			'easySearchGlobal', // Array containing dynamic data for a JS Global.
 			[
 				'pluginDirPath' => plugin_dir_path( __DIR__ ),
 				'pluginDirUrl'  => plugin_dir_url( __DIR__ ),
-				// Add more data here that you want to access from `cgbGlobal` object.
+				// Add more data here that you want to access from `easySearchGlobal` object.
 			]
 		);
 
@@ -159,13 +159,13 @@ if( ! function_exists( 'easy_search_block_assets' ) ) :
 		register_block_type(
 			'easy-search/easy-search', array(
 				// Enqueue blocks.style.build.css on both frontend & backend.
-				'script'         => 'easy_search-cgb-block-front-end-js',
+				'script'         => 'easy_search-block-front-end-js',
 				// Enqueue blocks.style.build.css on both frontend & backend.
-				'style'         => 'easy_search-cgb-style-css',
+				'style'         => 'easy_search-style-css',
 				// Enqueue blocks.build.js in the editor only.
-				'editor_script' => 'easy_search-cgb-block-js',
+				'editor_script' => 'easy_search-block-js',
 				// Enqueue blocks.editor.build.css in the editor only.
-				'editor_style'  => 'easy_search-cgb-block-editor-css',
+				'editor_style'  => 'easy_search-block-editor-css',
 			)
 		);
 	}
@@ -173,3 +173,37 @@ if( ! function_exists( 'easy_search_block_assets' ) ) :
 	// Hook: Block assets.
 	add_action( 'init', 'easy_search_block_assets' );
 endif;
+
+if( ! function_exists( 'easy_search_shortcode_markup' ) ) :
+	/**
+	 * Easy Shrotcode Markup
+	 *
+	 * @param  $atts  Shortcode attributes.
+	 * @since 1.1.0
+	 * @return mixed
+	 */
+	function easy_search_shortcode_markup( $atts = array() ) {
+		wp_enqueue_style( 'easy_search-style-css' );
+		wp_enqueue_script( 'easy_search-block-front-end-js' );
+
+		$atts = shortcode_atts( array(
+			'placeholder' => __('Search..', 'easy-search'),
+			'subtype' => '',
+		), $atts );
+		ob_start();
+		?>
+		<div class="easy-search">
+			<div class="easy-search-input-wrap">
+				<input type="text" data-subtype="<?php echo esc_html( $atts['subtype'] ); ?>" class="easy-search-input" placeholder="<?php echo esc_html( $atts['placeholder'] ); ?>" />
+				<span class="easy-search-spinner"></span>
+				<span class="easy-search-close"></span>
+			</div>
+			<div class="easy-search-result"></div>
+		</div>
+		<?php
+		easy_search_js_templates();
+		return ob_get_clean();
+	}
+	add_shortcode( 'easy_search', 'easy_search_shortcode_markup' );
+endif;
+

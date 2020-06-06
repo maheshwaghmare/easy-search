@@ -2,8 +2,8 @@
 
 ![Easy Search](easy-search.png)
 
-### Use below command to auto refresh the browser.
+Zero configuration search box Gutenberg block.
 
-```sh
-browser-sync start --proxy="localhost/dev/wp-admin/post.php?post=27682&action=edit" --files "**/*"
-```"# easy-search" 
+Not using the Gutenberg block editor? Then, Simply use the shortcode <code>[easy_search]</code> anywhere.
+
+Read more at <a href="https://maheshwaghmare.com/doc/easy-search/">getting started guide</a>.
